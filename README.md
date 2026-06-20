@@ -7,11 +7,11 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/iamvvek/fossil/actions/workflows/ci.yml"><img src="https://github.com/iamvvek/fossil/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="https://github.com/iamvvek/fossil/actions/workflows/ci.yml"><img src="https://github.com/iamvvekverma/fossil/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
   <a href="https://pypi.org/project/fossil-code/"><img src="https://img.shields.io/pypi/v/fossil-code?color=%2334D058&label=pypi" alt="PyPI"></a>
   <a href="https://pypi.org/project/fossil-code/"><img src="https://img.shields.io/pypi/pyversions/fossil-code" alt="Python"></a>
-  <a href="https://github.com/iamvvek/fossil/blob/main/LICENSE"><img src="https://img.shields.io/github/license/iamvvek/fossil?color=blue" alt="License"></a>
-  <a href="https://github.com/iamvvek/fossil/issues"><img src="https://img.shields.io/github/issues/iamvvek/fossil" alt="Issues"></a>
+  <a href="https://github.com/iamvvekverma/fossil/blob/main/LICENSE"><img src="https://img.shields.io/github/license/iamvvek/fossil?color=blue" alt="License"></a>
+  <a href="https://github.com/iamvvekverma/fossil/issues"><img src="https://img.shields.io/github/issues/iamvvekverma/fossil" alt="Issues"></a>
 </p>
 
 ---
