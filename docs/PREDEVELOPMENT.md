@@ -1,4 +1,7 @@
 # fossil — Pre-Development Documentation
+
+> **Note:** This is a historical specification document created before development began. For current architecture, see [ARCHITECTURE.md](ARCHITECTURE.md).
+
 ### Complete Technical Specification for Dead Code Forensics CLI
 
 ---

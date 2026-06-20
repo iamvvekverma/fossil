@@ -29,6 +29,34 @@
 7. `cache.py` → store result for future lookups
 8. `render.py` → Rich panel output (or JSON / plain text based on flags)
 
+```mermaid
+sequenceDiagram
+    participant CLI
+    participant Cache
+    participant Static as Analyzers
+    participant Git as GitMiner
+    participant Pattern as Patterns
+    participant Scorer as Scoring
+    participant Render
+    
+    CLI->>Cache: Check hit
+    alt Hit
+        Cache-->>CLI: Return result
+        CLI->>Render: Output
+    else Miss
+        CLI->>Static: Parse & trace refs
+        Static-->>CLI: AST signals
+        CLI->>Git: Mine log & blame
+        Git-->>CLI: Death commit & PR context
+        CLI->>Pattern: Find "TODO: remove"
+        Pattern-->>CLI: Condition status
+        CLI->>Scorer: Aggregate 14 signals
+        Scorer-->>CLI: Confidence 0-100%
+        CLI->>Cache: Save
+        CLI->>Render: Render Rich Panel
+    end
+```
+
 ## Data Flow: `fossil scan <directory>`
 
 1. Enumerate source files (filtered by language, exclusion globs)

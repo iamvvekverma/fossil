@@ -99,17 +99,32 @@ fossil explain src/billing/legacy_processor.py --plain
 
 For every file analyzed, `fossil` runs five stages in under 3 seconds:
 
-```
-┌──────────────┐    ┌──────────────┐    ┌──────────────┐    ┌──────────────┐    ┌──────────────┐
-│   Static     │    │   Git        │    │   Pattern    │    │  Confidence  │    │   Output     │
-│   Analysis   │───▶│   History    │───▶│   Detection  │───▶│   Scoring    │───▶│   Rendering  │
-│              │    │   Mining     │    │              │    │              │    │              │
-│ • imports    │    │ • death      │    │ • TODO:      │    │ • 14 signals │    │ • Rich panel │
-│ • call sites │    │   commit     │    │   remove     │    │ • 0-100%     │    │ • JSON       │
-│ • dynamic    │    │ • PR number  │    │ • DEPRECATED │    │ • risk label │    │ • plain text │
-│ • reflection │    │ • author     │    │ • keep for   │    │              │    │              │
-│              │    │ • blame      │    │   now        │    │              │    │              │
-└──────────────┘    └──────────────┘    └──────────────┘    └──────────────┘    └──────────────┘
+```mermaid
+flowchart LR
+    Static[Static<br/>Analysis]
+    Git[Git History<br/>Mining]
+    Pattern[Pattern<br/>Detection]
+    Scoring[Confidence<br/>Scoring]
+    Render[Output<br/>Rendering]
+
+    Static --> Git --> Pattern --> Scoring --> Render
+
+    subgraph Details
+        direction LR
+        S1(imports, calls<br/>dynamic, reflection) -.- Static
+        G1(death commit<br/>PR, author) -.- Git
+        P1(TODO: remove<br/>DEPRECATED) -.- Pattern
+        C1(14 signals<br/>0-100% score) -.- Scoring
+    end
+
+    style Static fill:#0d1117,stroke:#58a6ff,stroke-width:2px,color:#c9d1d9
+    style Git fill:#0d1117,stroke:#3fb950,stroke-width:2px,color:#c9d1d9
+    style Pattern fill:#0d1117,stroke:#d2a8ff,stroke-width:2px,color:#c9d1d9
+    style Scoring fill:#0d1117,stroke:#ff7b72,stroke-width:2px,color:#c9d1d9
+    style Render fill:#0d1117,stroke:#a5d6ff,stroke-width:2px,color:#c9d1d9
+    style Details fill:none,stroke:none
+    
+    linkStyle 0,1,2,3 stroke:#8b949e,stroke-width:2px
 ```
 
 ### Confidence Score
