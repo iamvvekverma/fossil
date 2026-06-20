@@ -113,31 +113,16 @@ fossil explain src/billing/legacy_processor.py --plain
 For every file analyzed, `fossil` runs five stages in under 3 seconds:
 
 ```
-┌──────────────┐    ┌──────────────┐    ┌──────────────┐    ┌──────────────┐    ┌──────────────┐
-│    Static    │───▶│  Git History │───▶│   Pattern    │───▶│  Confidence  │───▶│    Output    │
-│   Analysis   │    │    Mining    │    │  Detection   │    │   Scoring    │    │  Rendering   │
-├──────────────┤    ├──────────────┤    ├──────────────┤    ├──────────────┤    └──────────────┘
-│ imports      │    │ death commit │    │ TODO: remove │    │ 14 signals   │
-│ calls        │    │ PR / author  │    │ DEPRECATED   │    │ 0–100% score │
-│ dynamic refs │    │ last modified│    │ keep-for-now │    │ risk label   │
-│ reflection   │    │ original by  │    │ date/version │    │              │
-└──────────────┘    └──────────────┘    └──────────────┘    └──────────────┘
+┌──────────────┐      ┌──────────────┐      ┌──────────────┐      ┌──────────────┐      ┌──────────────┐
+│    Static    │───▶ │  Git History │───▶ │   Pattern    │───▶ │  Confidence  │───▶ │    Output    │
+│   Analysis   │      │    Mining    │      │  Detection   │      │   Scoring    │      │  Rendering   │
+├──────────────┤      ├──────────────┤      ├──────────────┤      ├──────────────┤      └──────────────┘
+│ imports      │      │ death commit │      │ TODO: remove │      │ 14 signals   │
+│ calls        │      │ PR / author  │      │ DEPRECATED   │      │ 0–100% score │
+│ dynamic refs │      │ last modified│      │ keep-for-now │      │ risk label   │
+│ reflection   │      │ original by  │      │ date/version │      │              │
+└──────────────┘      └──────────────┘      └──────────────┘      └──────────────┘
 ```
-
-<!--
-GitHub renders Mermaid natively. The ASCII art above is for PyPI compatibility.
-Original Mermaid source:
-
-```mermaid
-flowchart LR
-    Static[Static<br/>Analysis]
-    Git[Git History<br/>Mining]
-    Pattern[Pattern<br/>Detection]
-    Scoring[Confidence<br/>Scoring]
-    Render[Output<br/>Rendering]
-    Static --> Git --> Pattern --> Scoring --> Render
-```
--->
 
 ### Confidence Score
 
