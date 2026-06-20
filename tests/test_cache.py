@@ -8,6 +8,7 @@ Covers §3.5:
 - Cache corruption recovery
 - Size limit enforcement
 """
+
 from __future__ import annotations
 
 from pathlib import Path
@@ -54,7 +55,9 @@ def test_cache_pr_crud(tmp_path: Path):
     from fossil.cache import CacheStore
 
     store = CacheStore(tmp_path)
-    store.put_pr("https://github.com/org/repo", 42, "Fix billing", "Full description", "2023-04-12T00:00:00Z")
+    store.put_pr(
+        "https://github.com/org/repo", 42, "Fix billing", "Full description", "2023-04-12T00:00:00Z"
+    )
 
     result = store.get_pr("https://github.com/org/repo", 42)
     assert result is not None

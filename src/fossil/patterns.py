@@ -10,7 +10,9 @@ from fossil.repo import run_git
 PATTERNS = [
     re.compile(r"TODO:\s*remove after\s+(?P<condition>.+)", re.IGNORECASE),
     re.compile(r"FIXME:\s*delete when\s+(?P<condition>.+)", re.IGNORECASE),
-    re.compile(r"keep(?:ing)? (?:this )?(?:around )?(?:for now|until\s+(?P<condition>.+))", re.IGNORECASE),
+    re.compile(
+        r"keep(?:ing)? (?:this )?(?:around )?(?:for now|until\s+(?P<condition>.+))", re.IGNORECASE
+    ),
     re.compile(r"\btemporary\b|\btemp code\b|\btemp fix\b", re.IGNORECASE),
     re.compile(r"\bDEPRECATED\b|@deprecated", re.IGNORECASE),
     re.compile(r"will be removed in\s+(?P<condition>.+)", re.IGNORECASE),
@@ -47,7 +49,9 @@ def verify_condition(condition: str, repo_root: Path) -> tuple[str, bool | None,
     pr = re.search(r"(?:PR|#)\s*(\d+)", condition, re.IGNORECASE)
     if pr:
         number = pr.group(1)
-        log = run_git(repo_root, ["log", "--all", "--grep", f"#{number}", "--format=%H %s"], check=False)
+        log = run_git(
+            repo_root, ["log", "--all", "--grep", f"#{number}", "--format=%H %s"], check=False
+        )
         if log.stdout.strip():
             return "pr", True, f"Found commit message referencing #{number}."
         return "pr", None, f"PR #{number} requires remote API verification."
@@ -73,4 +77,3 @@ def _parse_date(value: str) -> date | None:
             except ValueError:
                 pass
     return None
-

@@ -3,6 +3,7 @@
 Covers §2.1 edge cases (file not found, untracked, gitignored, symlink),
 §2.7 (scan), §2.8 (JSON output), and §2.9 (--yolo guarding).
 """
+
 from __future__ import annotations
 
 import json
@@ -16,7 +17,9 @@ from conftest import commit_all
 
 def run_cli(repo, *args):
     env = os.environ.copy()
-    env["PYTHONPATH"] = str(Path(__file__).resolve().parent.parent / "src") + os.pathsep + env.get("PYTHONPATH", "")
+    env["PYTHONPATH"] = (
+        str(Path(__file__).resolve().parent.parent / "src") + os.pathsep + env.get("PYTHONPATH", "")
+    )
     return subprocess.run(
         [sys.executable, "-m", "fossil.cli", *args],
         cwd=repo,
@@ -29,6 +32,7 @@ def run_cli(repo, *args):
 # ---------------------------------------------------------------------------
 # fossil explain
 # ---------------------------------------------------------------------------
+
 
 def test_explain_dead_python_file(make_repo):
     repo = make_repo()
@@ -182,6 +186,7 @@ def test_explain_narrate_returns_error(make_repo):
 # fossil scan
 # ---------------------------------------------------------------------------
 
+
 def test_scan_returns_dead_files(make_repo):
     repo = make_repo()
     (repo / "dead.py").write_text("class Dead:\n    pass\n", encoding="utf-8")
@@ -221,7 +226,9 @@ def test_scan_language_filter(make_repo):
     (repo / "dead.js").write_text("export class Dead {}\n", encoding="utf-8")
     commit_all(repo, "initial")
 
-    result = run_cli(repo, "scan", ".", "--language", "py", "--threshold", "40", "--json", "--no-cache")
+    result = run_cli(
+        repo, "scan", ".", "--language", "py", "--threshold", "40", "--json", "--no-cache"
+    )
     assert result.returncode in (0, 4)
     payload = json.loads(result.stdout)
     for item in payload:
@@ -243,12 +250,17 @@ def test_scan_plain_output(make_repo):
     commit_all(repo, "initial")
 
     result = run_cli(repo, "scan", ".", "--threshold", "40", "--plain", "--no-cache")
-    assert "fossil scan" in result.stdout or "No dead code" in result.stdout or "dead" in result.stdout.lower()
+    assert (
+        "fossil scan" in result.stdout
+        or "No dead code" in result.stdout
+        or "dead" in result.stdout.lower()
+    )
 
 
 # ---------------------------------------------------------------------------
 # fossil clean
 # ---------------------------------------------------------------------------
+
 
 def test_clean_shows_backlog(make_repo):
     repo = make_repo()
@@ -279,6 +291,7 @@ def test_clean_yolo_returns_integration_error(make_repo):
 # fossil cache
 # ---------------------------------------------------------------------------
 
+
 def test_cache_clear(make_repo):
     repo = make_repo()
     (repo / "f.py").write_text("x = 1\n", encoding="utf-8")
@@ -294,10 +307,12 @@ def test_cache_clear(make_repo):
 # fossil config
 # ---------------------------------------------------------------------------
 
+
 def test_config_show(make_repo):
     result = subprocess.run(
         [sys.executable, "-m", "fossil.cli", "config", "show"],
-        text=True, capture_output=True,
+        text=True,
+        capture_output=True,
     )
     assert result.returncode == 0
 

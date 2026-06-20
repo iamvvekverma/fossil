@@ -2,6 +2,7 @@
 
 Covers §8.3 of the pre-development docs.
 """
+
 from __future__ import annotations
 
 from pathlib import Path
@@ -13,7 +14,7 @@ def test_read_project_config(tmp_path: Path):
     config_file = tmp_path / ".fossil.toml"
     config_file.write_text(
         '[analysis]\nlanguages = ["py", "js"]\nexclude_patterns = ["**/migrations/**"]\n\n'
-        '[thresholds]\nminimum_confidence = 75\nyolo_minimum_confidence = 90\n\n'
+        "[thresholds]\nminimum_confidence = 75\nyolo_minimum_confidence = 90\n\n"
         '[pr]\nbase_branch = "main"\npr_labels = ["cleanup"]\n',
         encoding="utf-8",
     )

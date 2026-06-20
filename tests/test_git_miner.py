@@ -8,6 +8,7 @@ Covers §2.3 edge cases:
 - Shallow clone detection
 - Untracked file handling
 """
+
 from __future__ import annotations
 
 from conftest import commit_all

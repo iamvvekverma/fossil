@@ -8,13 +8,17 @@ import pytest
 
 
 def git(repo: Path, *args: str) -> str:
-    result = subprocess.run(["git", "-C", str(repo), *args], text=True, capture_output=True, check=True)
+    result = subprocess.run(
+        ["git", "-C", str(repo), *args], text=True, capture_output=True, check=True
+    )
     return result.stdout
 
 
 @pytest.fixture
 def make_repo(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
-    monkeypatch.setenv("PYTHONPATH", str(Path.cwd() / "src") + os.pathsep + os.environ.get("PYTHONPATH", ""))
+    monkeypatch.setenv(
+        "PYTHONPATH", str(Path.cwd() / "src") + os.pathsep + os.environ.get("PYTHONPATH", "")
+    )
 
     def _make() -> Path:
         repo = tmp_path / "repo"
@@ -30,4 +34,3 @@ def make_repo(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
 def commit_all(repo: Path, message: str) -> None:
     git(repo, "add", ".")
     git(repo, "commit", "-m", message)
-

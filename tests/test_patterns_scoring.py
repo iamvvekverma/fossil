@@ -10,6 +10,7 @@ Covers §2.5 (pattern detection) and §2.6 (confidence scoring):
 - Confidence score computation with all signals
 - Risk label assignment
 """
+
 from __future__ import annotations
 
 from pathlib import Path
@@ -20,8 +21,10 @@ from conftest import commit_all, git
 # Pattern Detection Tests
 # ---------------------------------------------------------------------------
 
+
 def test_date_condition_resolution(tmp_path: Path):
     from fossil.patterns import verify_condition
+
     kind, met, evidence = verify_condition("2020-01-01", tmp_path)
     assert kind == "date"
     assert met is True
@@ -30,6 +33,7 @@ def test_date_condition_resolution(tmp_path: Path):
 
 def test_date_condition_future(tmp_path: Path):
     from fossil.patterns import verify_condition
+
     kind, met, evidence = verify_condition("2099-12-31", tmp_path)
     assert kind == "date"
     assert met is False
@@ -38,6 +42,7 @@ def test_date_condition_future(tmp_path: Path):
 
 def test_unverifiable_condition(tmp_path: Path):
     from fossil.patterns import verify_condition
+
     kind, met, evidence = verify_condition("when the new billing system is stable", tmp_path)
     assert kind == "unverifiable"
     assert met is None
@@ -46,6 +51,7 @@ def test_unverifiable_condition(tmp_path: Path):
 
 def test_empty_condition(tmp_path: Path):
     from fossil.patterns import verify_condition
+
     kind, met, evidence = verify_condition("", tmp_path)
     assert kind == "unverifiable"
     assert met is None
@@ -162,6 +168,7 @@ def test_detect_multiple_patterns(make_repo):
 # Confidence Scoring Tests
 # ---------------------------------------------------------------------------
 
+
 def test_confidence_high_when_clearly_dead():
     from fossil.models import (
         CommitInfo,
@@ -177,16 +184,25 @@ def test_confidence_high_when_clearly_dead():
         import_references=0,
     )
     death = CommitInfo(
-        hash="abc123", short_hash="abc123", date="2020-01-01T00:00:00Z",
-        author_name="Test", author_email="t@t.com", message="Remove legacy (#42)", pr_number=42,
+        hash="abc123",
+        short_hash="abc123",
+        date="2020-01-01T00:00:00Z",
+        author_name="Test",
+        author_email="t@t.com",
+        message="Remove legacy (#42)",
+        pr_number=42,
     )
     git_result = GitHistoryResult(
         head="HEAD",
         tracked=True,
         death_commit=death,
         last_modified=CommitInfo(
-            hash="def456", short_hash="def456", date="2020-01-01T00:00:00Z",
-            author_name="Test", author_email="t@t.com", message="last",
+            hash="def456",
+            short_hash="def456",
+            date="2020-01-01T00:00:00Z",
+            author_name="Test",
+            author_email="t@t.com",
+            message="last",
         ),
     )
     patterns = PatternResult(detected=False)
@@ -210,7 +226,9 @@ def test_confidence_low_with_dynamic_imports():
         language="python",
         call_sites=0,
         import_references=0,
-        dynamic_references=[Reference("loader.py", 1, "dynamic", "importlib.import_module('legacy')")],
+        dynamic_references=[
+            Reference("loader.py", 1, "dynamic", "importlib.import_module('legacy')")
+        ],
         reflection_patterns=[Reference("caller.py", 5, "reflection", "getattr(mod, 'Legacy')")],
     )
     git_result = GitHistoryResult(head="HEAD", tracked=True, ambiguous_death=True)
@@ -236,8 +254,12 @@ def test_confidence_penalizes_unresolved_hold():
         detected=True,
         patterns=[
             HoldPattern(
-                text="keep for now", line=1, condition="Q2 rollout",
-                condition_type="unverifiable", condition_met=None, evidence="Cannot verify",
+                text="keep for now",
+                line=1,
+                condition="Q2 rollout",
+                condition_type="unverifiable",
+                condition_met=None,
+                evidence="Cannot verify",
             )
         ],
     )
@@ -251,7 +273,9 @@ def test_confidence_unknown_language_penalty():
     from fossil.models import GitHistoryResult, PatternResult, StaticAnalysisResult
     from fossil.scoring import score
 
-    static = StaticAnalysisResult(language="unknown", call_sites=0, import_references=0, unknown_language=True)
+    static = StaticAnalysisResult(
+        language="unknown", call_sites=0, import_references=0, unknown_language=True
+    )
     git_result = GitHistoryResult(head="HEAD", tracked=True, ambiguous_death=True)
     patterns = PatternResult(detected=False)
 

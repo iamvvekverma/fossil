@@ -25,7 +25,9 @@ def parse_commit(raw: str) -> CommitInfo:
     )
 
 
-def mine_history(path: Path, repo_root: Path, depth: int, reference_terms: set[str]) -> GitHistoryResult:
+def mine_history(
+    path: Path, repo_root: Path, depth: int, reference_terms: set[str]
+) -> GitHistoryResult:
     rel = relpath(path, repo_root)
     result = GitHistoryResult(
         head=git_head(repo_root),
@@ -39,13 +41,19 @@ def mine_history(path: Path, repo_root: Path, depth: int, reference_terms: set[s
         return result
 
     fmt = "%H%x1f%ct%x1f%an%x1f%ae%x1f%s"
-    file_log = run_git(repo_root, ["log", f"--max-count={depth}", f"--format={fmt}", "--follow", "--", rel], check=False)
+    file_log = run_git(
+        repo_root,
+        ["log", f"--max-count={depth}", f"--format={fmt}", "--follow", "--", rel],
+        check=False,
+    )
     commits = [parse_commit(line) for line in file_log.stdout.splitlines() if line.strip()]
     if commits:
         result.last_modified = commits[0]
         result.original_author = commits[-1]
     if len(commits) >= depth:
-        result.warnings.append(f"History truncated at {depth} commits. Increase --depth for deeper traversal.")
+        result.warnings.append(
+            f"History truncated at {depth} commits. Increase --depth for deeper traversal."
+        )
 
     terms = [term for term in reference_terms if term]
     if not terms:
@@ -58,10 +66,13 @@ def mine_history(path: Path, repo_root: Path, depth: int, reference_terms: set[s
         check=False,
     )
     ref_commits = [parse_commit(line) for line in ref_log.stdout.splitlines() if line.strip()]
-    candidates = [commit for commit in ref_commits if commit.hash != (result.last_modified.hash if result.last_modified else "")]
+    candidates = [
+        commit
+        for commit in ref_commits
+        if commit.hash != (result.last_modified.hash if result.last_modified else "")
+    ]
     if candidates:
         result.death_commit = candidates[0]
     else:
         result.ambiguous_death = True
     return result
-

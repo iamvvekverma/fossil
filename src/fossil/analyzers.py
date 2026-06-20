@@ -70,7 +70,9 @@ def module_names(path: Path, repo_root: Path) -> set[str]:
     return {name for name in names if name}
 
 
-def analyze_file(path: Path, repo_root: Path, exclude: list[str] | None = None) -> StaticAnalysisResult:
+def analyze_file(
+    path: Path, repo_root: Path, exclude: list[str] | None = None
+) -> StaticAnalysisResult:
     language = language_for(path)
     symbols = exported_symbols(path)
     modules = module_names(path, repo_root)
@@ -147,7 +149,13 @@ def _scan_python(
             if name and (name in symbols or name.split(".")[0] in imported_aliases):
                 _add_ref(result, rel, node.lineno, "call", lines[node.lineno - 1])
         elif isinstance(node, ast.Name) and node.id in symbols:
-            _add_ref(result, rel, getattr(node, "lineno", 1), "call", lines[getattr(node, "lineno", 1) - 1])
+            _add_ref(
+                result,
+                rel,
+                getattr(node, "lineno", 1),
+                "call",
+                lines[getattr(node, "lineno", 1) - 1],
+            )
 
 
 def _call_name(node: ast.AST) -> str | None:
@@ -168,11 +176,19 @@ def _scan_text(
     result: StaticAnalysisResult,
     target_rel: str,
 ) -> None:
-    needles = sorted(modules | symbols | ({target_rel} if target_rel else set()), key=len, reverse=True)
+    needles = sorted(
+        modules | symbols | ({target_rel} if target_rel else set()), key=len, reverse=True
+    )
     if not needles:
         return
     pattern = re.compile(r"\b(" + "|".join(re.escape(n) for n in needles if n) + r")\b")
-    kind = "doc" if path.suffix.lower() in DOC_EXTENSIONS else "config" if path.suffix.lower() in CONFIG_EXTENSIONS else "call"
+    kind = (
+        "doc"
+        if path.suffix.lower() in DOC_EXTENSIONS
+        else "config"
+        if path.suffix.lower() in CONFIG_EXTENSIONS
+        else "call"
+    )
     for idx, line in enumerate(text.splitlines(), 1):
         if pattern.search(line):
             _add_ref(result, rel, idx, kind, line)
@@ -203,4 +219,3 @@ def _scan_dynamic_and_reflection(
                 result.dynamic_references.append(Reference(rel, idx, "dynamic", line.strip()))
             if reflection_re.search(line) and module_re.search(line):
                 result.reflection_patterns.append(Reference(rel, idx, "reflection", line.strip()))
-

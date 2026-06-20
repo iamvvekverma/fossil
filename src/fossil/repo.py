@@ -16,7 +16,9 @@ class NotGitRepositoryError(FossilError):
     exit_code = 3
 
 
-def run_git(repo_root: Path | None, args: list[str], check: bool = True) -> subprocess.CompletedProcess[str]:
+def run_git(
+    repo_root: Path | None, args: list[str], check: bool = True
+) -> subprocess.CompletedProcess[str]:
     cmd = ["git"]
     if repo_root is not None:
         cmd.extend(["-C", str(repo_root)])
@@ -52,7 +54,9 @@ def relpath(path: Path, repo_root: Path) -> str:
 
 
 def is_tracked(path: Path, repo_root: Path) -> bool:
-    result = run_git(repo_root, ["ls-files", "--error-unmatch", relpath(path, repo_root)], check=False)
+    result = run_git(
+        repo_root, ["ls-files", "--error-unmatch", relpath(path, repo_root)], check=False
+    )
     return result.returncode == 0
 
 
@@ -76,4 +80,3 @@ def remote_url(repo_root: Path) -> str | None:
 def is_shallow(repo_root: Path) -> bool:
     result = run_git(repo_root, ["rev-parse", "--is-shallow-repository"], check=False)
     return result.stdout.strip().lower() == "true"
-

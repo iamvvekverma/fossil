@@ -66,4 +66,3 @@ def test_explain_untracked_file_reports_no_history(make_repo):
     payload = json.loads(result.stdout)
     assert "UNTRACKED" in payload["status"]
     assert payload["confidence"] is None
-

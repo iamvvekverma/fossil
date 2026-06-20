@@ -10,6 +10,7 @@ Implements §3.4 of the pre-development docs:
 - Global flags: --no-color, --plain, --version
 - Exit codes: 0 (dead), 1 (error), 2 (file not found), 3 (not git repo), 4 (alive/no results), 5 (unsupported)
 """
+
 from __future__ import annotations
 
 import argparse
@@ -102,18 +103,28 @@ def build_parser() -> argparse.ArgumentParser:
 # Command implementations
 # ---------------------------------------------------------------------------
 
+
 def cmd_explain(args: argparse.Namespace) -> int:
     if args.narrate:
-        print("--narrate requires a configured LLM provider. Run: fossil config set llm_provider openai", file=sys.stderr)
+        print(
+            "--narrate requires a configured LLM provider. Run: fossil config set llm_provider openai",
+            file=sys.stderr,
+        )
         return 1
     result = explain(args.target, depth=args.depth, no_cache=args.no_cache)
     if args.yolo or args.force_yolo:
         min_score = 90 if args.yolo and not args.force_yolo else 0
         score = result.confidence.score if result.confidence else 0
         if score < min_score:
-            print(f"Confidence is {score}%. --yolo blocked below 90%. Use --force-yolo to override.", file=sys.stderr)
+            print(
+                f"Confidence is {score}%. --yolo blocked below 90%. Use --force-yolo to override.",
+                file=sys.stderr,
+            )
             return 1
-        print("--yolo PR generation requires GitHub/GitLab API integration; no files were changed.", file=sys.stderr)
+        print(
+            "--yolo PR generation requires GitHub/GitLab API integration; no files were changed.",
+            file=sys.stderr,
+        )
         return 1
     output = render_explain(
         result,
@@ -139,18 +150,23 @@ def cmd_scan(args: argparse.Namespace) -> int:
     candidates = [
         path
         for path in iter_repo_files(root, exclude)
-        if path.suffix.lower() in SOURCE_EXTENSIONS and (selected is None or language_for(path) in selected)
+        if path.suffix.lower() in SOURCE_EXTENSIONS
+        and (selected is None or language_for(path) in selected)
     ]
 
     if not candidates:
         if args.json:
             print(json.dumps([]))
         else:
-            print(f"No supported source files found in {args.directory}. Supported: Python, JavaScript, TypeScript, Java, Go.")
+            print(
+                f"No supported source files found in {args.directory}. Supported: Python, JavaScript, TypeScript, Java, Go."
+            )
         return 4
 
     # Analyze files with progress
-    results = _analyze_files_parallel(candidates, args.depth, args.no_cache, args.threshold, args.plain)
+    results = _analyze_files_parallel(
+        candidates, args.depth, args.no_cache, args.threshold, args.plain
+    )
 
     if args.json:
         print(json.dumps([r.to_dict() for r in results], indent=2, sort_keys=True))
@@ -158,7 +174,11 @@ def cmd_scan(args: argparse.Namespace) -> int:
         use_rich = not args.plain and _rich_ok()
         if use_rich:
             output = render_rich_scan(
-                results, str(repo_root), len(candidates), args.threshold, args.directory,
+                results,
+                str(repo_root),
+                len(candidates),
+                args.threshold,
+                args.directory,
                 no_color=args.no_color,
             )
             print(output)
@@ -189,11 +209,11 @@ def cmd_clean(args: argparse.Namespace) -> int:
         exclude.extend(project_config["analysis"]["exclude_patterns"])
 
     candidates = [
-        path
-        for path in iter_repo_files(root, exclude)
-        if path.suffix.lower() in SOURCE_EXTENSIONS
+        path for path in iter_repo_files(root, exclude) if path.suffix.lower() in SOURCE_EXTENSIONS
     ]
-    results = _analyze_files_parallel(candidates, args.depth, args.no_cache, args.threshold, args.plain)
+    results = _analyze_files_parallel(
+        candidates, args.depth, args.no_cache, args.threshold, args.plain
+    )
 
     if args.json:
         print(json.dumps([r.to_dict() for r in results], indent=2, sort_keys=True))
@@ -204,7 +224,10 @@ def cmd_clean(args: argparse.Namespace) -> int:
         use_rich = not args.plain and _rich_ok()
         if use_rich:
             output = render_rich_clean(
-                results, str(repo_root), args.threshold, args.directory,
+                results,
+                str(repo_root),
+                args.threshold,
+                args.directory,
                 dry_run=args.dry_run or not args.yolo,
                 no_color=args.no_color,
             )
@@ -218,7 +241,10 @@ def cmd_clean(args: argparse.Namespace) -> int:
                 print(f"{index}. {rel} — {score}% — {result.suggested_action}")
 
     if args.yolo:
-        print("--yolo PR generation requires GitHub/GitLab API integration; no files were changed.", file=sys.stderr)
+        print(
+            "--yolo PR generation requires GitHub/GitLab API integration; no files were changed.",
+            file=sys.stderr,
+        )
         return 1
     return 0 if results else 4
 
@@ -245,6 +271,7 @@ def _analyze_files_parallel(
                 SpinnerColumn,
                 TextColumn,
             )
+
             with Progress(
                 SpinnerColumn(),
                 TextColumn("[bold blue]Scanning..."),
@@ -258,12 +285,19 @@ def _analyze_files_parallel(
                 # Use parallel only if enough files
                 if len(candidates) >= 10:
                     with ThreadPoolExecutor(max_workers=worker_count) as pool:
-                        futures = {pool.submit(explain_file, str(p), depth=depth, no_cache=no_cache): p for p in candidates}
+                        futures = {
+                            pool.submit(explain_file, str(p), depth=depth, no_cache=no_cache): p
+                            for p in candidates
+                        }
                         for future in as_completed(futures):
                             progress.advance(task)
                             try:
                                 result = future.result()
-                                if result.dead and result.confidence and result.confidence.score >= threshold:
+                                if (
+                                    result.dead
+                                    and result.confidence
+                                    and result.confidence.score >= threshold
+                                ):
                                     results.append(result)
                             except Exception:
                                 pass
@@ -272,7 +306,11 @@ def _analyze_files_parallel(
                         progress.advance(task)
                         try:
                             result = explain_file(str(path), depth=depth, no_cache=no_cache)
-                            if result.dead and result.confidence and result.confidence.score >= threshold:
+                            if (
+                                result.dead
+                                and result.confidence
+                                and result.confidence.score >= threshold
+                            ):
                                 results.append(result)
                         except Exception:
                             pass
@@ -302,6 +340,7 @@ def _language_filter(value: str) -> set[str] | None:
 def _rich_ok() -> bool:
     try:
         from rich.console import Console  # noqa: F401
+
         return True
     except ImportError:
         return False
@@ -310,6 +349,7 @@ def _rich_ok() -> bool:
 # ---------------------------------------------------------------------------
 # Cache & config commands
 # ---------------------------------------------------------------------------
+
 
 def cmd_cache_clear(args: argparse.Namespace) -> int:
     repo_root = find_repo_root(Path.cwd())
@@ -348,6 +388,7 @@ def cmd_config_set(args: argparse.Namespace) -> int:
 # ---------------------------------------------------------------------------
 # Entry point & error handling
 # ---------------------------------------------------------------------------
+
 
 def main(argv: list[str] | None = None) -> None:
     parser = build_parser()

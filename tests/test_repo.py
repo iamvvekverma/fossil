@@ -2,6 +2,7 @@
 
 Covers repository detection, path resolution, and git operations.
 """
+
 from __future__ import annotations
 
 from pathlib import Path

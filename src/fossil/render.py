@@ -6,6 +6,7 @@ Implements the Terminal UX Specification from §4 of the pre-development docs:
 - Plain text fallback when Rich is unavailable or --plain is passed
 - JSON rendering (unchanged)
 """
+
 from __future__ import annotations
 
 import contextlib
@@ -22,6 +23,7 @@ if TYPE_CHECKING:
 # JSON renderer
 # ---------------------------------------------------------------------------
 
+
 def render_json(result: ForensicResult) -> str:
     return json.dumps(result.to_dict(), indent=2, sort_keys=True)
 
@@ -30,9 +32,11 @@ def render_json(result: ForensicResult) -> str:
 # Detect Rich availability
 # ---------------------------------------------------------------------------
 
+
 def _rich_available() -> bool:
     try:
         from rich.console import Console  # noqa: F401
+
         return True
     except ImportError:
         return False
@@ -41,6 +45,7 @@ def _rich_available() -> bool:
 # ---------------------------------------------------------------------------
 # Rich terminal renderer (§4.1)
 # ---------------------------------------------------------------------------
+
 
 def render_rich(result: ForensicResult, *, no_color: bool = False) -> str:
     """Render a forensic report using Rich panels, tables, and colors."""
@@ -82,29 +87,50 @@ def render_rich(result: ForensicResult, *, no_color: bool = False) -> str:
             if dc.pr_number:
                 hist.add_row("PR", Text(f"#{dc.pr_number} · {dc.message[:55]}", style="white"))
         elif result.git_history.ambiguous_death:
-            hist.add_row("Death commit", Text("AMBIGUOUS — no single death commit found", style="yellow"))
+            hist.add_row(
+                "Death commit", Text("AMBIGUOUS — no single death commit found", style="yellow")
+            )
         if result.git_history.original_author:
             oa = result.git_history.original_author
-            hist.add_row("Original by", Text(f"{oa.author_name} · first committed {oa.date[:10]}", style="dim white"))
+            hist.add_row(
+                "Original by",
+                Text(f"{oa.author_name} · first committed {oa.date[:10]}", style="dim white"),
+            )
         sections.append(Panel(hist, title="[bold white]History[/bold white]", border_style="dim"))
 
     # ── Temporary Hold section ──
     if result.temporary_hold.detected:
         hold_parts: list[Text] = []
         for pat in result.temporary_hold.patterns:
-            status_icon = "✓" if pat.condition_met is True else "✗" if pat.condition_met is False else "⚠"
-            icon_style = "green" if pat.condition_met is True else "red" if pat.condition_met is False else "yellow"
+            status_icon = (
+                "✓" if pat.condition_met is True else "✗" if pat.condition_met is False else "⚠"
+            )
+            icon_style = (
+                "green"
+                if pat.condition_met is True
+                else "red"
+                if pat.condition_met is False
+                else "yellow"
+            )
             line = Text()
             line.append("  Pattern  ", style="dim")
             line.append(f'"{pat.text[:70]}" (line {pat.line})', style="white")
             line.append("\n  Status   ", style="dim")
             line.append(f"{status_icon} ", style=icon_style)
-            status_label = "RESOLVED" if pat.condition_met is True else "UNRESOLVED" if pat.condition_met is False else "UNVERIFIED"
+            status_label = (
+                "RESOLVED"
+                if pat.condition_met is True
+                else "UNRESOLVED"
+                if pat.condition_met is False
+                else "UNVERIFIED"
+            )
             line.append(status_label, style=icon_style)
             line.append(f"  —  {pat.evidence}", style="dim white")
             hold_parts.append(line)
         hold_text = Text("\n").join(hold_parts)
-        sections.append(Panel(hold_text, title="[bold white]Temporary Hold[/bold white]", border_style="dim"))
+        sections.append(
+            Panel(hold_text, title="[bold white]Temporary Hold[/bold white]", border_style="dim")
+        )
 
     # ── Static Analysis section ──
     sa = result.static_analysis
@@ -113,11 +139,26 @@ def render_rich(result: ForensicResult, *, no_color: bool = False) -> str:
     sa_table.add_column("v1", width=8)
     sa_table.add_column("k2", style="dim", width=20)
     sa_table.add_column("v2", width=20)
-    sa_table.add_row("Call sites", str(sa.call_sites), "Dynamic imports", str(len(sa.dynamic_references)))
-    sa_table.add_row("Import refs", str(sa.import_references), "Reflection",
-                     "None detected" if not sa.reflection_patterns else f"{len(sa.reflection_patterns)} detected")
-    sa_table.add_row("Test references", str(sa.test_file_references), "Config refs", str(sa.config_file_references))
-    sections.append(Panel(sa_table, title="[bold white]Static Analysis[/bold white]", border_style="dim"))
+    sa_table.add_row(
+        "Call sites", str(sa.call_sites), "Dynamic imports", str(len(sa.dynamic_references))
+    )
+    sa_table.add_row(
+        "Import refs",
+        str(sa.import_references),
+        "Reflection",
+        "None detected"
+        if not sa.reflection_patterns
+        else f"{len(sa.reflection_patterns)} detected",
+    )
+    sa_table.add_row(
+        "Test references",
+        str(sa.test_file_references),
+        "Config refs",
+        str(sa.config_file_references),
+    )
+    sections.append(
+        Panel(sa_table, title="[bold white]Static Analysis[/bold white]", border_style="dim")
+    )
 
     # ── Confidence section ──
     if result.confidence:
@@ -161,8 +202,11 @@ def render_rich(result: ForensicResult, *, no_color: bool = False) -> str:
 
     # Build the main panel
     from rich.console import Group
+
     content = Group(*sections)
-    panel = Panel(content, title="[bold cyan]fossil[/bold cyan]", border_style="cyan", padding=(1, 2))
+    panel = Panel(
+        content, title="[bold cyan]fossil[/bold cyan]", border_style="cyan", padding=(1, 2)
+    )
 
     console.print(panel)
     return buf.getvalue()
@@ -222,7 +266,10 @@ def render_rich_scan(
 
         table.add_row(rel, r.language.title(), dead_since, Text(f"{score}%", style=score_style))
         with contextlib.suppress(OSError):
-            total_loc += sum(1 for _ in Path(r.abs_path).read_text(encoding="utf-8", errors="replace").splitlines())
+            total_loc += sum(
+                1
+                for _ in Path(r.abs_path).read_text(encoding="utf-8", errors="replace").splitlines()
+            )
 
     console.print(table)
     console.print(f"\n  {len(results)} dead files found above {threshold}% threshold.")
@@ -289,6 +336,7 @@ def render_rich_clean(
 # Plain-text renderer (unchanged from original, used as fallback)
 # ---------------------------------------------------------------------------
 
+
 def render_text(result: ForensicResult) -> str:
     lines = [
         "fossil forensic report",
@@ -325,7 +373,13 @@ def render_text(result: ForensicResult) -> str:
         lines.append("")
         lines.append("Temporary hold patterns:")
         for pattern in result.temporary_hold.patterns:
-            status = "resolved" if pattern.condition_met is True else "unresolved" if pattern.condition_met is False else "unverified"
+            status = (
+                "resolved"
+                if pattern.condition_met is True
+                else "unresolved"
+                if pattern.condition_met is False
+                else "unverified"
+            )
             lines.append(f"  line {pattern.line}: {status}: {pattern.text}")
             lines.append(f"    evidence: {pattern.evidence}")
     if result.confidence:
@@ -356,7 +410,10 @@ def render_text(result: ForensicResult) -> str:
 # Dispatcher — pick Rich or plain based on environment/flags
 # ---------------------------------------------------------------------------
 
-def should_use_rich(*, plain: bool = False, no_color: bool = False, json_mode: bool = False) -> bool:
+
+def should_use_rich(
+    *, plain: bool = False, no_color: bool = False, json_mode: bool = False
+) -> bool:
     """Determine whether to use Rich rendering."""
     if json_mode or plain:
         return False
@@ -365,11 +422,15 @@ def should_use_rich(*, plain: bool = False, no_color: bool = False, json_mode: b
     return _rich_available()
 
 
-def render_explain(result: ForensicResult, *, json_mode: bool = False, plain: bool = False, no_color: bool = False) -> str:
+def render_explain(
+    result: ForensicResult, *, json_mode: bool = False, plain: bool = False, no_color: bool = False
+) -> str:
     """Render a single explain result with the best available renderer."""
     if json_mode:
         return render_json(result)
-    no_color = no_color or bool(os.environ.get("NO_COLOR")) or bool(os.environ.get("FOSSIL_NO_COLOR"))
+    no_color = (
+        no_color or bool(os.environ.get("NO_COLOR")) or bool(os.environ.get("FOSSIL_NO_COLOR"))
+    )
     if not plain and _rich_available():
         return render_rich(result, no_color=no_color)
     return render_text(result)

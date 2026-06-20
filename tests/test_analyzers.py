@@ -9,6 +9,7 @@ Covers §2.2 edge cases:
 - Documentation / config file reference detection
 - Unknown language fallback via text search
 """
+
 from __future__ import annotations
 
 from pathlib import Path

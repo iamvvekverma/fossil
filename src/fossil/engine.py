@@ -83,8 +83,12 @@ def _from_dict(data: dict, cached: bool) -> ForensicResult:
         **{
             **static_data,
             "references": [Reference(**r) for r in static_data.get("references", [])],
-            "dynamic_references": [Reference(**r) for r in static_data.get("dynamic_references", [])],
-            "reflection_patterns": [Reference(**r) for r in static_data.get("reflection_patterns", [])],
+            "dynamic_references": [
+                Reference(**r) for r in static_data.get("dynamic_references", [])
+            ],
+            "reflection_patterns": [
+                Reference(**r) for r in static_data.get("reflection_patterns", [])
+            ],
         }
     )
     git_data = data["git_history"]
@@ -116,4 +120,3 @@ def _from_dict(data: dict, cached: bool) -> ForensicResult:
             "cached": cached,
         }
     )
-

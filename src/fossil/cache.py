@@ -8,6 +8,7 @@ Implements §3.5 of the pre-development docs:
 - Auto-prune entries older than cache_ttl_hours when cache exceeds 100MB
 - Corruption detection and silent rebuild
 """
+
 from __future__ import annotations
 
 import json
@@ -52,7 +53,7 @@ CREATE TABLE IF NOT EXISTS schema_version (version INTEGER);
 """
 
 MAX_CACHE_BYTES = 100 * 1024 * 1024  # 100 MB
-MAX_RESULT_BYTES = 5 * 1024 * 1024   # 5 MB
+MAX_RESULT_BYTES = 5 * 1024 * 1024  # 5 MB
 DEFAULT_TTL_HOURS = 24
 
 
@@ -93,7 +94,9 @@ class CacheStore:
             return None
         return json.loads(row[0]) if row else None
 
-    def put_analysis(self, file_path: Path, head: str, repo_root: Path, version: str, result: dict[str, Any]) -> None:
+    def put_analysis(
+        self, file_path: Path, head: str, repo_root: Path, version: str, result: dict[str, Any]
+    ) -> None:
         payload = json.dumps(result, sort_keys=True)
         if len(payload.encode("utf-8")) > MAX_RESULT_BYTES:
             return
@@ -125,7 +128,9 @@ class CacheStore:
             return None
         return json.loads(row[0]) if row else None
 
-    def put_scan(self, scan_target: str, head: str, repo_root: Path, result: list[dict[str, Any]]) -> None:
+    def put_scan(
+        self, scan_target: str, head: str, repo_root: Path, result: list[dict[str, Any]]
+    ) -> None:
         payload = json.dumps(result, sort_keys=True)
         if len(payload.encode("utf-8")) > MAX_RESULT_BYTES:
             return
@@ -157,7 +162,14 @@ class CacheStore:
             return None
         return {"pr_title": row[0], "pr_body": row[1], "merged_at": row[2]}
 
-    def put_pr(self, remote_url: str, pr_number: int, title: str | None, body: str | None, merged_at: str | None) -> None:
+    def put_pr(
+        self,
+        remote_url: str,
+        pr_number: int,
+        title: str | None,
+        body: str | None,
+        merged_at: str | None,
+    ) -> None:
         try:
             with self._connect() as conn:
                 conn.execute(

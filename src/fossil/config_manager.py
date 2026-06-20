@@ -7,6 +7,7 @@ Implements §8 of the pre-development docs:
 - Masked display of sensitive values
 - TOML parsing via tomllib (Python 3.11+)
 """
+
 from __future__ import annotations
 
 import os
@@ -21,10 +22,16 @@ SENSITIVE = {"github_token", "gitlab_token", "llm_api_key"}
 
 # Valid config keys (§8.2)
 VALID_KEYS = {
-    "github_token", "gitlab_token", "llm_api_key",
-    "llm_provider", "llm_model", "llm_base_url",
-    "default_depth", "cache_ttl_hours",
-    "output.color", "output.theme",
+    "github_token",
+    "gitlab_token",
+    "llm_api_key",
+    "llm_provider",
+    "llm_model",
+    "llm_base_url",
+    "default_depth",
+    "cache_ttl_hours",
+    "output.color",
+    "output.theme",
 }
 
 # Env var → config key mapping
@@ -121,7 +128,9 @@ def get_effective_config(repo_root: Path | None = None) -> dict[str, Any]:
 
 
 def masked_config() -> dict[str, str]:
-    return {key: _mask(value) if key in SENSITIVE else value for key, value in read_config().items()}
+    return {
+        key: _mask(value) if key in SENSITIVE else value for key, value in read_config().items()
+    }
 
 
 def _mask(value: str) -> str:
