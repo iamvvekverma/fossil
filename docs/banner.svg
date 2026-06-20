@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 200" fill="none">
+  <rect width="800" height="200" rx="12" fill="#0d1117"/>
+  <!-- Bone/fossil icon -->
+  <g transform="translate(40, 50)">
+    <!-- Terminal bracket -->
+    <text x="0" y="80" font-family="monospace" font-size="90" font-weight="bold" fill="#58a6ff">❯</text>
+    <!-- Fossil bone -->
+    <g transform="translate(60, 20)">
+      <ellipse cx="12" cy="12" rx="12" ry="10" fill="#3fb950" opacity="0.8"/>
+      <ellipse cx="12" cy="68" rx="12" ry="10" fill="#3fb950" opacity="0.8"/>
+      <rect x="6" y="12" width="12" height="56" rx="6" fill="#3fb950" opacity="0.8"/>
+    </g>
+  </g>
+  <!-- fossil text -->
+  <text x="160" y="125" font-family="'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace" font-size="72" font-weight="700" fill="#e6edf3">fossil</text>
+  <!-- Subtitle -->
+  <text x="162" y="165" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="22" fill="#8b949e">dead code forensics</text>
+</svg>
