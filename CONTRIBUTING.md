@@ -6,7 +6,7 @@ Thanks for your interest in contributing! This guide will help you get started.
 
 ```bash
 # Clone the repository
-git clone https://github.com/YOUR_USERNAME/fossil.git
+git clone https://github.com/iamvvekverma/fossil.git
 cd fossil
 
 # Create a virtual environment
@@ -138,7 +138,7 @@ Add support for Ruby static analysis
 
 ## Reporting Bugs
 
-Please use the [Bug Report template](https://github.com/YOUR_USERNAME/fossil/issues/new?template=bug_report.yml) on GitHub.
+Please use the [Bug Report template](https://github.com/iamvvekverma/fossil/issues/new?template=bug_report.yml) on GitHub.
 
 Include:
 - fossil version (`fossil --version`)
@@ -149,7 +149,7 @@ Include:
 
 ## Feature Requests
 
-Use the [Feature Request template](https://github.com/YOUR_USERNAME/fossil/issues/new?template=feature_request.yml).
+Use the [Feature Request template](https://github.com/iamvvekverma/fossil/issues/new?template=feature_request.yml).
 
 ## Code of Conduct
 

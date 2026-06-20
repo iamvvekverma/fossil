@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/banner.svg" alt="fossil — dead code forensics" width="600">
+  <img src="https://raw.githubusercontent.com/iamvvekverma/fossil/main/docs/banner.svg" alt="fossil — dead code forensics" width="600">
 </p>
 
 <p align="center">
@@ -7,10 +7,10 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/iamvvek/fossil/actions/workflows/ci.yml"><img src="https://github.com/iamvvekverma/fossil/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="https://github.com/iamvvekverma/fossil/actions/workflows/ci.yml"><img src="https://github.com/iamvvekverma/fossil/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
   <a href="https://pypi.org/project/fossil-code/"><img src="https://img.shields.io/pypi/v/fossil-code?color=%2334D058&label=pypi" alt="PyPI"></a>
   <a href="https://pypi.org/project/fossil-code/"><img src="https://img.shields.io/pypi/pyversions/fossil-code" alt="Python"></a>
-  <a href="https://github.com/iamvvekverma/fossil/blob/main/LICENSE"><img src="https://img.shields.io/github/license/iamvvek/fossil?color=blue" alt="License"></a>
+  <a href="https://github.com/iamvvekverma/fossil/blob/main/LICENSE"><img src="https://img.shields.io/github/license/iamvvekverma/fossil?color=blue" alt="License"></a>
   <a href="https://github.com/iamvvekverma/fossil/issues"><img src="https://img.shields.io/github/issues/iamvvekverma/fossil" alt="Issues"></a>
 </p>
 
@@ -32,7 +32,7 @@ Every mature codebase accumulates dead code. Existing tools tell you **what** is
 | Who wrote it originally? | ❌ | ✅ — original author from git blame |
 | Is there a "keep for now" comment? | ❌ | ✅ — detects and verifies the condition |
 | Is it safe to delete? | ❌ | ✅ — 0–100% confidence score |
-| Can it auto-delete for me? | ❌ | ✅ — `--yolo` creates a PR |
+| Can it auto-delete for me? | ❌ | 🔜 Phase 3 — `--yolo` creates a PR |
 
 ## Installation
 
@@ -61,7 +61,20 @@ fossil clean ./src --threshold 85
 fossil explain src/billing/legacy_processor.py --plain
 ```
 
+## Demo
+
+<!-- TODO: Record a real demo GIF running fossil explain on an open-source repo
+     with genuinely dead code. Suggested: run against Django, FastAPI, or Flask.
+     Use `terminalizer` or `asciinema` to record. Target: 30 seconds showing
+     fossil explain + fossil scan. -->
+
+*Demo GIF coming soon. Install and try it on your own repo:*
+`pip install fossil-code && fossil explain <any_unused_file.py>`
+
 ## Example Output
+
+> **Note:** The following output is illustrative. Run `fossil` on your own
+> repository to see real forensic data.
 
 ```
 ╭─────────────────────────────────── fossil ───────────────────────────────────╮
@@ -89,7 +102,7 @@ fossil explain src/billing/legacy_processor.py --plain
 │  │    91%  ██████████████████░░  HIGH CONFIDENCE · LOW RISK               │  │
 │  ╰────────────────────────────────────────────────────────────────────────╯  │
 │    Suggested   rm src/billing/legacy_processor.py                            │
-│    Auto-PR     fossil explain src/billing/legacy_processor.py --yolo         │
+│    Auto-PR     (Coming in Phase 3: --yolo flag)                              │
 │    Analysis duration: 1840ms                                                 │
 │                                                                              │
 ╰──────────────────────────────────────────────────────────────────────────────╯
@@ -99,6 +112,22 @@ fossil explain src/billing/legacy_processor.py --plain
 
 For every file analyzed, `fossil` runs five stages in under 3 seconds:
 
+```
+┌──────────────┐    ┌──────────────┐    ┌──────────────┐    ┌──────────────┐    ┌──────────────┐
+│    Static    │───▶│  Git History │───▶│   Pattern    │───▶│  Confidence  │───▶│    Output    │
+│   Analysis   │    │    Mining    │    │  Detection   │    │   Scoring    │    │  Rendering   │
+├──────────────┤    ├──────────────┤    ├──────────────┤    ├──────────────┤    └──────────────┘
+│ imports      │    │ death commit │    │ TODO: remove │    │ 14 signals   │
+│ calls        │    │ PR / author  │    │ DEPRECATED   │    │ 0–100% score │
+│ dynamic refs │    │ last modified│    │ keep-for-now │    │ risk label   │
+│ reflection   │    │ original by  │    │ date/version │    │              │
+└──────────────┘    └──────────────┘    └──────────────┘    └──────────────┘
+```
+
+<!--
+GitHub renders Mermaid natively. The ASCII art above is for PyPI compatibility.
+Original Mermaid source:
+
 ```mermaid
 flowchart LR
     Static[Static<br/>Analysis]
@@ -106,26 +135,9 @@ flowchart LR
     Pattern[Pattern<br/>Detection]
     Scoring[Confidence<br/>Scoring]
     Render[Output<br/>Rendering]
-
     Static --> Git --> Pattern --> Scoring --> Render
-
-    subgraph Details
-        direction LR
-        S1(imports, calls<br/>dynamic, reflection) -.- Static
-        G1(death commit<br/>PR, author) -.- Git
-        P1(TODO: remove<br/>DEPRECATED) -.- Pattern
-        C1(14 signals<br/>0-100% score) -.- Scoring
-    end
-
-    style Static fill:#0d1117,stroke:#58a6ff,stroke-width:2px,color:#c9d1d9
-    style Git fill:#0d1117,stroke:#3fb950,stroke-width:2px,color:#c9d1d9
-    style Pattern fill:#0d1117,stroke:#d2a8ff,stroke-width:2px,color:#c9d1d9
-    style Scoring fill:#0d1117,stroke:#ff7b72,stroke-width:2px,color:#c9d1d9
-    style Render fill:#0d1117,stroke:#a5d6ff,stroke-width:2px,color:#c9d1d9
-    style Details fill:none,stroke:none
-    
-    linkStyle 0,1,2,3 stroke:#8b949e,stroke-width:2px
 ```
+-->
 
 ### Confidence Score
 
@@ -172,9 +184,9 @@ fossil explain src/billing/legacy.py --depth 2000  # Deeper git history
 | `--no-cache` | false | Skip cache read/write |
 | `--depth N` | 500 | Max git commits to traverse |
 | `--remote` | auto | Force remote: `github`, `gitlab`, `none`, `auto` |
-| `--yolo` | false | Create deletion PR if confidence ≥ 90% |
-| `--force-yolo` | false | Create deletion PR regardless of confidence |
-| `--narrate` | false | LLM narration (requires provider config) |
+| `--yolo` | false | Create deletion PR if confidence ≥ 90% (Phase 3 — not yet available) |
+| `--force-yolo` | false | Create deletion PR regardless of confidence (Phase 3 — not yet available) |
+| `--narrate` | false | LLM narration (requires provider config) (Phase 4 — not yet available) |
 
 ### `fossil scan [directory]`
 
@@ -228,12 +240,18 @@ fossil cache stats    # Show cache statistics
 ### GitHub Actions
 
 ```yaml
-- name: Check for dead code
+- name: Scan for dead code
   run: |
     pip install fossil-code
-    fossil scan . --threshold 90 --json > dead_report.json
-    # Exit 0 = dead code found above 90% → fail the step
-    # Exit 4 = no dead code above 90% → pass
+    # fossil exits 0 when dead code IS found above threshold
+    # fossil exits 4 when NO dead code is found above threshold
+    fossil scan . --threshold 90 --json > dead_report.json || true
+    if [ -s dead_report.json ] && [ "$(cat dead_report.json)" != "[]" ]; then
+      echo "::warning::Dead code found above 90% confidence — see dead_report.json"
+      # Uncomment the next line to fail CI on dead code:
+      # exit 1
+    fi
+    # Note: --yolo auto-PR creation is coming in Phase 3.
 ```
 
 ### Pre-commit Hook
@@ -272,7 +290,7 @@ exclude_patterns = ["**/migrations/**", "**/generated/**"]
 
 [thresholds]
 minimum_confidence = 70
-yolo_minimum_confidence = 90
+# yolo_minimum_confidence = 90  # Coming in Phase 3
 
 [pr]
 base_branch = "main"
@@ -303,20 +321,20 @@ All environment variables override config file values:
 | Go | Text fallback | Filename/symbol reference search |
 | Other | Text fallback | Filename reference search |
 
-> **Python** gets the deepest analysis via the `ast` module. Other languages use conservative text-based reference search as a fallback. tree-sitter integration for deeper multi-language analysis is planned.
+> **Python** gets the deepest analysis via the `ast` module. Other languages use conservative text-based reference search as a fallback. Text-based fallback searches for the filename and exported symbol names as plain strings across the codebase. It produces more false negatives than the Python AST analyzer and may report higher confidence than warranted for non-Python files. tree-sitter integration for deeper multi-language analysis is planned.
 
 ## Offline by Default
 
 `fossil` works with **zero network access**. The core analysis pipeline (static analysis → git mining → pattern detection → confidence scoring) runs entirely offline.
 
 Network is only used for three **optional** features:
-- GitHub/GitLab API — PR title/body lookup, `--yolo` PR creation
-- LLM API — `--narrate` natural language explanation
+- GitHub/GitLab API — PR title/body lookup, `--yolo` PR creation (Phase 3)
+- LLM API — `--narrate` natural language explanation (Phase 4)
 
 ## Development
 
 ```bash
-git clone https://github.com/iamvvek/fossil.git
+git clone https://github.com/iamvvekverma/fossil.git
 cd fossil
 python3 -m venv .venv && source .venv/bin/activate
 pip install -e ".[dev]"
@@ -328,7 +346,7 @@ pytest -v
 ruff check src/ tests/
 ```
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for the full development guide.
+See [CONTRIBUTING.md](https://github.com/iamvvekverma/fossil/blob/main/CONTRIBUTING.md) for the full development guide.
 
 ## Roadmap
 
@@ -339,4 +357,4 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for the full development guide.
 
 ## License
 
-[MIT](LICENSE) — use it, fork it, ship it.
+[MIT](https://github.com/iamvvekverma/fossil/blob/main/LICENSE) — use it, fork it, ship it.
