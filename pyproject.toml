@@ -3,7 +3,7 @@ requires = ["setuptools>=68"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "fossil-cli"
+name = "fossil-code"
 version = "0.2.0"
 description = "Dead-code forensics CLI — find dead code, understand why it died, and safely delete it."
 readme = "README.md"

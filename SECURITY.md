@@ -13,7 +13,7 @@ If you discover a security vulnerability in `fossil`, please report it responsib
 
 **Do NOT open a public GitHub issue for security vulnerabilities.**
 
-Instead, please email: **security@fossil-cli.dev** (or open a private security advisory on GitHub).
+Instead, please email: **security@fossil-code.dev** (or open a private security advisory on GitHub).
 
 ### What to include
 

@@ -1017,7 +1017,7 @@ pr_reviewers    = []           # Optional: list of GitHub usernames to auto-assi
 - `--json` flag for `fossil explain`.
 - `--no-color` and `--plain` flags.
 - pytest suite: 3 fixture repos covering happy path, no-history case, and live-file case.
-- `pyproject.toml` with `fossil` entry point; `pip install fossil-cli` works.
+- `pyproject.toml` with `fossil` entry point; `pip install fossil-code` works.
 
 **Out of scope for Phase 1:** Multi-language support, scan command, pattern detection, GitHub API PR fetching, `--yolo`, LLM narration.
 
@@ -1128,7 +1128,7 @@ pr_reviewers    = []           # Optional: list of GitHub usernames to auto-assi
 
 Before writing the first line of code, the following decisions must be made:
 
-- [ ] **Package name on PyPI:** `fossil-cli` is the suggested name (since `fossil` is taken by a version control system). Confirm availability and choose final name. This affects the entry point in `pyproject.toml` and all installation documentation.
+- [ ] **Package name on PyPI:** `fossil-code` is the suggested name (since `fossil` is taken by a version control system). Confirm availability and choose final name. This affects the entry point in `pyproject.toml` and all installation documentation.
 
 - [ ] **Symbol-level vs. file-level analysis in Phase 1:** This spec primarily describes file-level analysis (the whole file is dead). Decide whether Phase 1 includes symbol-level analysis (`fossil explain src/module.py::MyClass`). Symbol-level is significantly more complex. Recommendation: file-level only for Phase 1.
 
@@ -1136,7 +1136,7 @@ Before writing the first line of code, the following decisions must be made:
 
 - [ ] **Minimum Python version:** This spec assumes 3.11+ for `tomllib`. If 3.9/3.10 support is needed, add `tomli` as a dependency for those versions. Confirm minimum supported version.
 
-- [ ] **tree-sitter grammar bundling strategy:** tree-sitter language grammars must be compiled or downloaded. Decide: (a) bundle pre-compiled grammars in the wheel, (b) compile at first run, or (c) require users to install language packages separately (e.g., `pip install fossil-cli[javascript]`). Option (c) is recommended for distribution size.
+- [ ] **tree-sitter grammar bundling strategy:** tree-sitter language grammars must be compiled or downloaded. Decide: (a) bundle pre-compiled grammars in the wheel, (b) compile at first run, or (c) require users to install language packages separately (e.g., `pip install fossil-code[javascript]`). Option (c) is recommended for distribution size.
 
 - [ ] **GitHub token scope strategy:** `repo` scope gives broad access. For read-only PR lookup (non-`--yolo` features), only `public_repo` or a fine-grained token with `pull_requests: read` is needed. Decide whether to require a single broad token or guide users through minimal-scope tokens for each feature tier.
 
@@ -1156,11 +1156,11 @@ Before writing the first line of code, the following decisions must be made:
 
 ## Implementation Report — 2026-06-19
 
-The first runnable implementation has been built in `/home/iamvvek/Dev/fossil` as `fossil-cli` version `0.1.0`.
+The first runnable implementation has been built in `/home/iamvvek/Dev/fossil` as `fossil-code` version `0.1.0`.
 
 ### Decisions Closed
 
-- [x] **Package name on PyPI:** Use `fossil-cli`; expose the executable as `fossil`.
+- [x] **Package name on PyPI:** Use `fossil-code`; expose the executable as `fossil`.
 - [x] **Symbol-level vs. file-level analysis in Phase 1:** File-level only. Symbol-level analysis remains a later feature because it changes the reference model and deletion semantics.
 - [x] **Concurrent.futures vs asyncio for parallel scan:** `ThreadPoolExecutor` remains the intended design for large scans. The `0.1.0` implementation is serial until profiling on real repositories proves the right concurrency boundary.
 - [x] **Minimum Python version:** Python 3.11+.

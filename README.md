@@ -8,8 +8,8 @@
 
 <p align="center">
   <a href="https://github.com/iamvvek/fossil/actions/workflows/ci.yml"><img src="https://github.com/iamvvek/fossil/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
-  <a href="https://pypi.org/project/fossil-cli/"><img src="https://img.shields.io/pypi/v/fossil-cli?color=%2334D058&label=pypi" alt="PyPI"></a>
-  <a href="https://pypi.org/project/fossil-cli/"><img src="https://img.shields.io/pypi/pyversions/fossil-cli" alt="Python"></a>
+  <a href="https://pypi.org/project/fossil-code/"><img src="https://img.shields.io/pypi/v/fossil-code?color=%2334D058&label=pypi" alt="PyPI"></a>
+  <a href="https://pypi.org/project/fossil-code/"><img src="https://img.shields.io/pypi/pyversions/fossil-code" alt="Python"></a>
   <a href="https://github.com/iamvvek/fossil/blob/main/LICENSE"><img src="https://img.shields.io/github/license/iamvvek/fossil?color=blue" alt="License"></a>
   <a href="https://github.com/iamvvek/fossil/issues"><img src="https://img.shields.io/github/issues/iamvvek/fossil" alt="Issues"></a>
 </p>
@@ -37,7 +37,7 @@ Every mature codebase accumulates dead code. Existing tools tell you **what** is
 ## Installation
 
 ```bash
-pip install fossil-cli
+pip install fossil-code
 ```
 
 > Requires **Python 3.11+** and **git**.
@@ -215,7 +215,7 @@ fossil cache stats    # Show cache statistics
 ```yaml
 - name: Check for dead code
   run: |
-    pip install fossil-cli
+    pip install fossil-code
     fossil scan . --threshold 90 --json > dead_report.json
     # Exit 0 = dead code found above 90% → fail the step
     # Exit 4 = no dead code above 90% → pass
